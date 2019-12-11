@@ -162,6 +162,11 @@ Java_com_sty_ne_audio_decodesync_AudioPlayer_sound(JNIEnv *env, jobject thiz, js
     env->ReleaseStringUTFChars(output_, output);
 }
 ```
+#### 2.2.1 packet转frame流程
+![image](https://github.com/tianyalu/NeAudioDecodeSync/blob/master/show/packet_to_frame.png)  
+#### 2.2.1 frame转audio可播放的统一格式流程
+![image](https://github.com/tianyalu/NeAudioDecodeSync/blob/master/show/frame_to_audio.png)  
+
 ### 2.3 MainActivity.java
 ```java
 public class MainActivity extends AppCompatActivity {
@@ -174,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
     private String inputStr;
     private String outputStr;
 
-    // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("neplayer");
     }
@@ -250,7 +254,6 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                         //finish();
                     }
                 }).show();
@@ -260,12 +263,12 @@ public class MainActivity extends AppCompatActivity {
 ## 三、采坑&经验
 ### 3.1 `avcodec_receive_frame()` 返回-23
 虽然代码终于是编译通过了，但是安装到真机后，点击“开始解码”按钮生成的文件为0kb。单步调试后发现
-`int ret = avcodec_receive_frame(codecContext, frame);` 这一步的返回值为-23，百思不得其解。后在添加如下代码：  
+`int ret = avcodec_receive_frame(codecContext, frame);` 这一步的返回值为-23，百思不得其解。于是添加如下代码：  
 ```c++
 char buf[1024];
 av_strerror(ret, buf, 1024);
 LOGE("ERROR INFO: %s", buf); 
 ```  
-输出的结果为`invalid argument`，后经仔细检查，发现漏掉了打开解码器的方法：  
+输出的结果为`invalid argument`，后经仔细检查，发现是漏掉了打开解码器的方法：  
 `avcodec_open2(codecContext, dec, NULL);`，加上之后才解决了问题。  
 在此获取一种解析错误原因，然后根据原因找错误的解决问题的思路。
