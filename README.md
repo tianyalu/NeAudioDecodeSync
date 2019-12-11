@@ -164,7 +164,7 @@ Java_com_sty_ne_audio_decodesync_AudioPlayer_sound(JNIEnv *env, jobject thiz, js
 ```
 #### 2.2.1 packet转frame流程
 ![image](https://github.com/tianyalu/NeAudioDecodeSync/blob/master/show/packet_to_frame.png)  
-#### 2.2.1 frame转audio可播放的统一格式流程
+#### 2.2.2 frame转audio可播放的统一格式流程
 ![image](https://github.com/tianyalu/NeAudioDecodeSync/blob/master/show/frame_to_audio.png)  
 
 ### 2.3 MainActivity.java
